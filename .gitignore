@@ -1,0 +1,6 @@
+.vs
+x64/
+*.swp
+*.sln
+*.vcxproj*
+*.dll
