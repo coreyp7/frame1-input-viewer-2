@@ -7,9 +7,33 @@ SDL_Renderer* renderer;
 int WINDOW_WIDTH = 500;
 int WINDOW_HEIGHT = 500;
 
+int setupSDL();
+
 int main(int, char**) {
 	printf("hello, world");
 
+	if (setupSDL() != 0) {
+		printf("unable to setup correctly");
+	}
+
+	bool quit = false;
+	SDL_Event event;
+
+	while (!quit) {
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) {
+				quit = true;
+			}
+		}
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		SDL_RenderPresent(renderer);
+		SDL_RenderClear(renderer);
+	}
+
+	return 0;
+}
+
+int setupSDL() {
 	// Setup SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
 	{
@@ -31,20 +55,4 @@ int main(int, char**) {
 		SDL_Log("Error creating SDL_Renderer!");
 		return 1;
 	}
-
-	bool quit = false;
-	SDL_Event event;
-
-	while (!quit) {
-		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
-				quit = true;
-			}
-		}
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		SDL_RenderPresent(renderer);
-		SDL_RenderClear(renderer);
-	}
-
-	return 0;
 }
