@@ -4,6 +4,7 @@
 
 SDL_Window* window;
 SDL_Renderer* renderer;
+SDL_Texture* texture;
 
 int WINDOW_WIDTH = 500;
 int WINDOW_HEIGHT = 500;
@@ -14,7 +15,7 @@ int main(int, char**) {
 	printf("hello, world");
 
 	if (setupSDL() != 0) {
-		printf("unable to setup correctly");
+		printf("Unable to setup correctly");
 	}
 
 	bool quit = false;
@@ -26,6 +27,12 @@ int main(int, char**) {
 				quit = true;
 			}
 		}
+
+
+  SDL_Rect dest = {0,0,500,500};
+
+	SDL_RenderCopy(renderer, texture, NULL, &dest);
+
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderPresent(renderer);
 		SDL_RenderClear(renderer);
@@ -64,6 +71,13 @@ int setupSDL() {
 	if (!(IMG_Init(imgFlags) & imgFlags)) {
 		printf("SDL_image Error: %s\n", IMG_GetError());
 		return 2;
+	}
+
+  // load test texture
+	texture = IMG_LoadTexture(renderer, "assets/test.png");
+	if (texture == NULL) {
+		printf("Couldn't load player texture. %s", IMG_GetError());
+    return 3;
 	}
 
   return 0;
