@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL.h>
+#include <SDL_image.h>
 
 SDL_Window* window;
 SDL_Renderer* renderer;
@@ -55,4 +56,15 @@ int setupSDL() {
 		SDL_Log("Error creating SDL_Renderer!");
 		return 1;
 	}
+
+
+
+	// SDL_Image
+	int imgFlags = IMG_INIT_PNG || IMG_INIT_JPG;
+	if (!(IMG_Init(imgFlags) & imgFlags)) {
+		printf("SDL_image Error: %s\n", IMG_GetError());
+		return 2;
+	}
+
+  return 0;
 }
