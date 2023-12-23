@@ -6,8 +6,8 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Texture* texture;
 
-int WINDOW_WIDTH = 500;
-int WINDOW_HEIGHT = 500;
+int WINDOW_WIDTH = 1080;
+int WINDOW_HEIGHT = 720;
 
 int setupSDL();
 
@@ -21,23 +21,35 @@ int main(int, char**) {
 	bool quit = false;
 	SDL_Event event;
 
+	// vsync stuff
+  Uint32 startOfFrame = 0;
+  const float TICKS_PER_FRAME = (1000.f / 60.f);
+
+
 	while (!quit) {
+    startOfFrame = SDL_GetTicks();
+
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
 				quit = true;
 			}
 		}
 
+		SDL_Rect dest = { 0,0,500,500 };
 
-  SDL_Rect dest = {0,0,500,500};
-
-	SDL_RenderCopy(renderer, texture, NULL, &dest);
+		SDL_RenderCopy(renderer, texture, NULL, &dest);
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderPresent(renderer);
 		SDL_RenderClear(renderer);
-	}
 
+    // Wait for remaining ticks in frame.
+    Uint32 frameLength = SDL_GetTicks() - startOfFrame;
+    if (frameLength < TICKS_PER_FRAME){
+      float remainingTimeOfFrame = TICKS_PER_FRAME - frameLength;
+      SDL_Delay(remainingTimeOfFrame);
+	  }
+  }
 	return 0;
 }
 
@@ -73,12 +85,12 @@ int setupSDL() {
 		return 2;
 	}
 
-  // load test texture
+	// load test texture
 	texture = IMG_LoadTexture(renderer, "assets/test.png");
 	if (texture == NULL) {
 		printf("Couldn't load player texture. %s", IMG_GetError());
-    return 3;
+		return 3;
 	}
 
-  return 0;
+	return 0;
 }
