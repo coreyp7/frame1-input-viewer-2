@@ -2,9 +2,12 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Texture* texture;
+
+SDL_Joystick* controller;
 
 int WINDOW_WIDTH = 1080;
 int WINDOW_HEIGHT = 720;
@@ -18,8 +21,16 @@ int main(int, char**) {
         printf("Unable to setup correctly");
     }
 
+    // Ensure there's a controller connected, and set the variable.
+    if(SDL_NumJoysticks() < 1){
+        printf("no joysticks found");
+        return -12;
+    }
+    controller = SDL_JoystickOpen(0); // TODO: nullcheck this
+
     bool quit = false;
     SDL_Event event;
+    
 
     // vsync stuff
     Uint32 startOfFrame = 0;
@@ -29,12 +40,37 @@ int main(int, char**) {
     while (!quit) {
         startOfFrame = SDL_GetTicks();
 
+        // Input
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                quit = true;
+            switch(event.type) {
+                case SDL_QUIT: 
+                {
+                    quit = true;
+                    break;
+                }
+                case SDL_JOYAXISMOTION:
+                {
+                    printf("xbox axis movement at %i\n", startOfFrame);
+                    printf("event.jaxis.value: %i\n", event.jaxis.value);
+                    printf("event.jaxis.axis: %i\n", event.jaxis.axis);
+                    break;
+                }
+                case SDL_JOYBUTTONUP:
+                {
+                    printf("xbox btnup at %i\n", startOfFrame);
+                    break;
+                }
+                case SDL_JOYBUTTONDOWN:
+                {
+                    printf("xbox btndown at %i\n", startOfFrame);
+                    break;
+                }
             }
         }
 
+
+        // Render
+        // TODO: show values of gamepad sticks as they move live.
         SDL_Rect dest = { 0,0,500,500 };
 
         SDL_RenderCopy(renderer, texture, NULL, &dest);
@@ -55,7 +91,7 @@ int main(int, char**) {
 
 int setupSDL() {
     // Setup SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) != 0)
     {
         printf("Error: %s\n", SDL_GetError());
         return -1;

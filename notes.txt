@@ -10,6 +10,11 @@ Initially, don't worry about sprites/animation being any good.
 - Get two sprites that you can move around with the joysticks of
 a xbox controller.
 
+Going to try and use github for the tasking stuff.
+
+Okay, lets go. ~@5:03PM 
+
+
 
 
 
