@@ -1,0 +1,20 @@
+For writing down ideas, tasks, etc.
+
+2/18/24 @ 4:20 pm:
+Going to try to make a juggling game.
+Control left hand and right hand with left stick and right stick respectively.
+Hold respective trigger to clench hand, let go to open hand.
+
+Initially, don't worry about sprites/animation being any good.
+
+- Get two sprites that you can move around with the joysticks of
+a xbox controller.
+
+
+
+
+
+
+
+
+

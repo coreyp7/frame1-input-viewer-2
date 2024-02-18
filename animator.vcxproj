@@ -24,6 +24,7 @@
     <ProjectGuid>{61A6A1BA-22BF-4788-B1BC-0330832A15C2}</ProjectGuid>
     <RootNamespace>animator</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>juggling</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
