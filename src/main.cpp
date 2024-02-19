@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_image.h>
-
+#include <SDL_ttf.h>
 
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Texture* texture;
+TTF_Font* font = NULL;
 
 SDL_Joystick* controller;
 
@@ -19,6 +20,7 @@ int main(int, char**) {
 
     if (setupSDL() != 0) {
         printf("Unable to setup correctly");
+        return -1;
     }
 
     // Ensure there's a controller connected, and set the variable.
@@ -90,19 +92,15 @@ int main(int, char**) {
 }
 
 int setupSDL() {
-    // Setup SDL
+
+    // SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) != 0)
     {
         printf("Error: %s\n", SDL_GetError());
         return -1;
     }
 
-    // From 2.0.18: Enable native IME.
-#ifdef SDL_HINT_IME_SHOW_UI
-    SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
-#endif
-
-    // Create window with SDL_Renderer graphics context
+    // Initialize our window with the rendering context in the window.
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     window = SDL_CreateWindow("QuadTree Collision Detection demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, window_flags);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); //SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
@@ -112,14 +110,24 @@ int setupSDL() {
         return 1;
     }
 
-
-
     // SDL_Image
     int imgFlags = IMG_INIT_PNG || IMG_INIT_JPG;
     if (!(IMG_Init(imgFlags) & imgFlags)) {
         printf("SDL_image Error: %s\n", IMG_GetError());
         return 2;
     }
+
+    // SDL ttf (initialize font variable)
+	if (TTF_Init() == -1) {
+		printf("ttf couldn't setup\n");
+		return 3;
+	}
+	font = TTF_OpenFont("assets/Aver.ttf", 26);
+	if (font == NULL) {
+		printf("problem loading font\n");
+		return 4;
+	}
+
 
     // load test texture
     texture = IMG_LoadTexture(renderer, "assets/test.png");
