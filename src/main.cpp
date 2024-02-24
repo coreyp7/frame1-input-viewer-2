@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string>
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -14,21 +16,29 @@ int WINDOW_WIDTH = 1080;
 int WINDOW_HEIGHT = 720;
 
 int setupSDL();
+SDL_Joystick* getFrame1AsJoystick();
 
 int main(int, char**) {
-    printf("hello, world");
 
     if (setupSDL() != 0) {
         printf("Unable to setup correctly");
         return -1;
     }
-
-    // Ensure there's a controller connected, and set the variable.
-    if(SDL_NumJoysticks() < 1){
-        printf("no joysticks found");
-        return -12;
+    controller = getFrame1AsJoystick();
+    if(controller == nullptr){
+        printf("Error trying to get frame1.\n");
+        return -2;
     }
-    controller = SDL_JoystickOpen(0); // TODO: nullcheck this
+
+    printf("----------\n");
+    printf("SELECTED JOYSTICK '%s', device details:\n", SDL_JoystickName(controller));
+    printf("joystick name: %s\n", SDL_JoystickName(controller));
+    printf("usb vendor id: %i\n", SDL_JoystickGetVendor(controller));
+    Uint16 id = SDL_JoystickGetProduct(controller);
+    printf("product id: %i\n", id);
+    printf("product version:%i\n", SDL_JoystickGetProductVersion(controller));
+    printf("firmware version:%i\n", SDL_JoystickGetFirmwareVersion(controller));
+    printf("----------\n");
 
     bool quit = false;
     SDL_Event event;
@@ -91,7 +101,40 @@ int main(int, char**) {
     return 0;
 }
 
+SDL_Joystick* getFrame1AsJoystick(){
+    SDL_Joystick* controller = nullptr;
+
+    // Ensure there's a controller connected, and set the variable.
+    if(SDL_NumJoysticks() < 1){
+        printf("No joysticks found\n");
+        return nullptr;
+    }
+
+    printf("Listing joysticks:\n");
+    int frame1Index = -1;
+    for(int i=0; i<SDL_NumJoysticks(); i++){
+        // Check joystick name and product id.
+        // For now, just going to use joystick id
+        controller = SDL_JoystickOpen(i);
+        std::string name = SDL_JoystickName(controller);
+        Uint16 id = SDL_JoystickGetProduct(controller);
+        printf("(name: '%s', id: %i)\n", name.c_str(), id);
+        if(name == "Frame1"){// && id == 22352){
+            frame1Index = i;
+        }
+    }
+
+    if(frame1Index < 0){
+        return nullptr;
+    }
+
+    controller = SDL_JoystickOpen(frame1Index);
+    return controller;
+}
+
 int setupSDL() {
+    // So this window doesn't have to be focused.
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 
     // SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK) != 0)
